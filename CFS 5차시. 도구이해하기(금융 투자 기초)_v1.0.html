@@ -134,32 +134,27 @@
       place-items: center;
     }
 
-    .viewport {
-      width: 100%;
-      height: 100%;
-      display: grid;
-      place-items: center;
-    }
-    .viewport::before {
-      content: "";
-      width: min(100%, 100vh);
-      aspect-ratio: 16 / 9;
-      max-height: 100%;
-      max-width: 100%;
-      display: block;
-    }
+/* viewport는 그대로 중앙정렬만 담당 */
+.viewport{
+  width:100%;
+  height:100%;
+  display:grid;
+  place-items:center;
+}
 
-    .stage-wrap {
-      position: absolute;
-      width: min(100%, 100vh);
-      aspect-ratio: 16 / 9;
-      max-height: 100%;
-      max-width: 100%;
-      border-radius: 14px;
-      overflow: hidden;
-      background: #0b1220;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.35);
-    }
+/* stage-wrap은 '크기 고정'을 없애고, JS가 width/height를 직접 세팅 */
+.stage-wrap{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%, -50%);
+  border-radius:14px;
+  overflow:hidden;
+  background:#0b1220;
+  box-shadow:0 20px 60px rgba(0,0,0,0.35);
+  /* ⛔ width/min/aspect/max-height/max-width 제거 */
+}
+
 
     .stage {
       width: 1280px;
@@ -1704,9 +1699,9 @@ border-radius: 0 8px 8px 0;
           <i class="fas fa-expand"></i><span class="label">전체화면</span>
         </button>
 
-        <a class="btn" id="btnPdf" href="./투자기초_교육강의안_정리본.pdf" download>
+        <button class="btn" id="btnPdf" title="PDF로 저장(인쇄)">
           <i class="fas fa-file-pdf"></i><span class="label">PDF</span>
-        </a>
+        </button>
 
         <button class="btn icon" id="btnHelp" title="조작 안내">
           <i class="fas fa-circle-info"></i>
@@ -3145,7 +3140,13 @@ Tip: 남들이 결과(현재)를 볼 때, 원인과 파급효과(미래)를 먼�
           <div><strong style="color:#e2e8f0;">페이지 이동</strong><br/>키보드: ←/→, Space / 모바일: 스와이프 / 버튼: 좌우 화살표</div>
           <div><strong style="color:#e2e8f0;">점프</strong><br/>Home: 첫 페이지 · End: 마지막 페이지</div>
           <div><strong style="color:#e2e8f0;">전체화면</strong><br/>우측 상단 ‘전체화면’ 버튼 (프리젠테이션 모드)</div>
-          <div><strong style="color:#e2e8f0;">PDF 다운로드</strong><br/>같은 폴더에 <code style="background: rgba(2,6,23,0.35); padding: 2px 6px; border-radius: 8px; border: 1px solid rgba(148,163,184,0.18);">투자기초_교육강의안_정리본.pdf</code> 파일이 있으면 버튼 클릭으로 다운로드됩니다.</div>
+          <div><strong style="color:#e2e8f0;">PDF로 저장</strong><br/>
+우측 상단 <strong>PDF</strong> 버튼을 누르면 브라우저 인쇄 창이 열립니다.
+대상 프린터에서 <strong>PDF로 저장</strong>(또는 ‘Microsoft Print to PDF’)을 선택해 저장하세요.<br/><br/>
+저장 파일명 기본값은
+<code style="background: rgba(2,6,23,0.35); padding: 2px 6px; border-radius: 8px; border: 1px solid rgba(148,163,184,0.18);">CFS 5차시. 도구이해하기(금융 투자 기초)</code>
+로 설정됩니다.
+</div>
         </div>
       </div>
     </div>
@@ -3168,10 +3169,29 @@ Tip: 남들이 결과(현재)를 볼 때, 원인과 파급효과(미래)를 먼�
     const stageShell = document.getElementById('stageShell');
 
     function fit() {
-      const rect = stageWrap.getBoundingClientRect();
-      const scale = Math.min(rect.width / 1280, rect.height / 720);
-      stage.style.transform = `scale(${scale})`;
-    }
+  // ✅ stageShell 안에서 16:9로 '가장 크게' 들어갈 수 있는 width/height 계산
+  const shellW = stageShell.clientWidth;
+  const shellH = stageShell.clientHeight;
+
+  // 16:9 비율로 최대 크기 (가로 제한 vs 세로 제한 중 작은 쪽)
+  let w = Math.min(shellW, shellH * (16 / 9));
+  let h = w * (9 / 16);
+
+  // 혹시 반대로 세로가 더 타이트해지는 케이스 보정
+  if (h > shellH) {
+    h = shellH;
+    w = h * (16 / 9);
+  }
+
+  // ✅ stageWrap 자체 크기를 '실제 픽셀'로 세팅 (PC/전체화면에서 꽉 차게)
+  stageWrap.style.width = `${w}px`;
+  stageWrap.style.height = `${h}px`;
+
+  // ✅ 1280x720 슬라이드를 stageWrap에 맞춰 스케일
+  const scale = w / 1280; // (w/1280 == h/720 이 항상 성립)
+  stage.style.transform = `scale(${scale})`;
+}
+
 
     function render(i) {
       idx = Math.max(0, Math.min(TOTAL - 1, i));
@@ -3233,7 +3253,12 @@ Tip: 남들이 결과(현재)를 볼 때, 원인과 파급효과(미래)를 먼�
       } catch (err) {
         console.warn('Fullscreen error:', err);
       }
-      setTimeout(() => requestAnimationFrame(fit), 80);
+      setTimeout(() => {
+  requestAnimationFrame(() => {
+    fit();
+    requestAnimationFrame(fit);
+  });
+}, 60);
     }
     btnFullscreen.addEventListener('click', toggleFullscreen);
     document.addEventListener('fullscreenchange', () => {
@@ -3243,27 +3268,16 @@ Tip: 남들이 결과(현재)를 볼 때, 원인과 파급효과(미래)를 먼�
       setTimeout(() => requestAnimationFrame(fit), 80);
     });
 
-    // PDF download robustness
-    const btnPdf = document.getElementById('btnPdf');
-    btnPdf.addEventListener('click', async (e) => {
-      const url = btnPdf.getAttribute('href');
-      try {
-        const res = await fetch(url, { cache: 'no-store' });
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        const blob = await res.blob();
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = '투자기초_교육강의안_정리본.pdf';
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-        e.preventDefault();
-      } catch (err) {
-        console.warn('PDF download fallback:', err);
-      }
-    });
+    // PDF로 저장(인쇄) - 브라우저 '인쇄' 기능 사용
+const btnPdf = document.getElementById('btnPdf');
 
+btnPdf.addEventListener('click', () => {
+  const originalTitle = document.title;
+  document.title = "CFS 5차시. 도구이해하기(금융 투자 기초)";
+  setTimeout(() => window.print(), 30);
+  setTimeout(() => { document.title = originalTitle; }, 800);
+});
+    
     // Help modal
     const helpModal = document.getElementById('helpModal');
     const btnHelp = document.getElementById('btnHelp');
