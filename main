@@ -1,2 +1,196 @@
-# Christian-Financial-Stewardship
-기독교인을 위한 금융교육 자료 공유 웹페이지
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Christian Financial Stewardship</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap" rel="stylesheet" />
+
+  <style>
+    :root{
+      --bg:#0b1220;
+      --card:rgba(15,23,42,.75);
+      --border:rgba(148,163,184,.22);
+      --text:#e5e7eb;
+      --muted:#94a3b8;
+      --accent:#38bdf8;
+      --accent2:#fbbf24;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:'Noto Sans KR',system-ui,-apple-system,BlinkMacSystemFont;
+      background:
+        radial-gradient(1200px 600px at 20% 10%, rgba(56,189,248,.15), transparent 60%),
+        radial-gradient(1000px 700px at 80% 80%, rgba(251,191,36,.12), transparent 60%),
+        var(--bg);
+      color:var(--text);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    /* Animated background grid */
+    .grid-bg{
+      position:fixed;
+      inset:0;
+      background-image:
+        linear-gradient(rgba(148,163,184,.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(148,163,184,.06) 1px, transparent 1px);
+      background-size:40px 40px;
+      mask-image:radial-gradient(circle at center, black 55%, transparent 85%);
+      pointer-events:none;
+      animation:gridMove 30s linear infinite;
+    }
+    @keyframes gridMove{
+      from{background-position:0 0}
+      to{background-position:40px 40px}
+    }
+
+    .container{
+      position:relative;
+      max-width:900px;
+      width:100%;
+      padding:24px;
+    }
+
+    .hero{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:24px;
+      padding:56px 48px;
+      backdrop-filter:blur(12px);
+      box-shadow:0 40px 120px rgba(0,0,0,.45);
+      text-align:center;
+    }
+
+    .badge{
+      display:inline-block;
+      padding:6px 14px;
+      border-radius:999px;
+      font-size:13px;
+      font-weight:800;
+      letter-spacing:.3px;
+      color:#0b1220;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      margin-bottom:18px;
+    }
+
+    h1{
+      margin:0 0 20px;
+      font-size:42px;
+      line-height:1.25;
+      font-weight:900;
+      letter-spacing:-.5px;
+    }
+
+    h1 span{
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+    }
+
+    p{
+      margin:0 auto 36px;
+      max-width:620px;
+      font-size:17px;
+      line-height:1.7;
+      color:var(--muted);
+    }
+
+    .cta-wrap{
+      display:flex;
+      justify-content:center;
+      gap:16px;
+      flex-wrap:wrap;
+    }
+
+    .cta{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:16px 28px;
+      border-radius:16px;
+      font-size:16px;
+      font-weight:900;
+      cursor:pointer;
+      border:1px solid transparent;
+      text-decoration:none;
+      transition:.25s ease;
+    }
+
+    .cta.primary{
+      color:#0b1220;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      box-shadow:0 10px 40px rgba(56,189,248,.35);
+    }
+    .cta.primary:hover{
+      transform:translateY(-2px);
+      box-shadow:0 18px 60px rgba(56,189,248,.45);
+    }
+
+    .cta.secondary{
+      color:var(--text);
+      background:rgba(2,6,23,.35);
+      border-color:var(--border);
+    }
+    .cta.secondary:hover{
+      border-color:var(--accent);
+    }
+
+    footer{
+      margin-top:28px;
+      text-align:center;
+      font-size:13px;
+      color:rgba(148,163,184,.8);
+    }
+
+    @media(max-width:600px){
+      .hero{padding:40px 26px}
+      h1{font-size:32px}
+      p{font-size:15px}
+    }
+  </style>
+</head>
+<body>
+
+  <div class="grid-bg"></div>
+
+  <div class="container">
+    <div class="hero">
+      <div class="badge">Christian Financial Stewardship</div>
+
+      <h1>
+        <span>Christian-Financial-Stewardship</span><br/>
+        서무궁의 기독교인을 위한 금융교육 블로그에 오신 것을 환영합니다.
+      </h1>
+
+      <p>
+        돈을 다루는 기술이 아니라,<br/>
+        <strong>청지기로서의 재정관 · 투자관 · 삶의 방향</strong>을 함께 고민하는 공간입니다.
+      </p>
+
+      <div class="cta-wrap">
+        <!-- 핵심 버튼 -->
+        <a href="https://smg0425.github.io/Christian-Financial-Stewardship/CFS%20chapter5" class="cta primary">
+          📘 CFS 5차시 강의자료 바로가기
+        </a>
+
+        <!-- 확장용 버튼 (선택) -->
+        <button class="cta secondary" onclick="alert('준비 중입니다 🙂')">
+          📚 강의 전체 목록
+        </button>
+      </div>
+    </div>
+
+    <footer>
+      © 2026 · Christian Financial Stewardship · Prepared by 서무궁
+    </footer>
+  </div>
+
+</body>
+</html>
